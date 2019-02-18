@@ -21,7 +21,6 @@ Vagrant.configure("2") do |config|
     cd weles
     make
     mv bin/weles /usr/bin/weles
-    weles --port 5010 --host 0.0.0.0 &
   SHELL
 
   config.vm.provision :boruta, type: :shell, preserve_order: true, inline: <<-SHELL
@@ -29,7 +28,40 @@ Vagrant.configure("2") do |config|
     cd boruta
     make
     mv bin/boruta /usr/bin/boruta
-    boruta &
+  SHELL
+
+  config.vm.provision :boruta_service, type: :shell, preserve_order: true, inline: <<-SHELL
+    cat > /etc/systemd/system/boruta.service <<EOL
+    [Unit]
+    Description=Boruta device manager
+    
+    [Service]
+    Type=simple
+    ExecStart=/usr/bin/boruta
+    
+    [Install]
+    WantedBy=default.target
+EOL
+
+    systemctl enable boruta
+    systemctl start boruta
+  SHELL
+
+  config.vm.provision :weles_service, type: :shell, preserve_order: true, inline: <<-SHELL
+    cat > /etc/systemd/system/weles.service <<EOL
+    [Unit]
+    Description=Weles testing server
+    
+    [Service]
+    Type=simple
+    ExecStart=/usr/bin/weles --port 5010 --host 0.0.0.0
+    
+    [Install]
+    WantedBy=default.target
+EOL
+
+    systemctl enable weles
+    systemctl start weles
   SHELL
 
   config.vm.network "forwarded_port", guest: 8487, host: 8888
