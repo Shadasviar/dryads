@@ -1,0 +1,7 @@
+[{
+    "repo":"test",
+    "name":"os-test",
+    "yaml":"~/os.yml",
+    "parser":"Default",
+    "targets":["rpi3", "TV"]
+}] 
