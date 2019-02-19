@@ -1,7 +1,7 @@
 [
   {
     "buildName":"test",
-    "buildCmd":"cd simple-weles-test && make",
+    "buildCmd":"cd simple-weles-test && sudo make clean && sudo make",
     "buildRepo":"https://github.com/Shadasviar/dryads",
     "buildResParser":"/home/vlad/programming/bash/gcc_parser.sh",
     "branches":["master"]
