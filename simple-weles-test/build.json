@@ -1,7 +1,7 @@
 [
   {
     "buildName":"test",
-    "buildCmd":"cd simple-weles-test && arm-linux-gnueabi-g++ test.cpp -o ostest",
+    "buildCmd":"cd simple-weles-test && make",
     "buildRepo":"https://github.com/Shadasviar/dryads",
     "buildResParser":"/home/vlad/programming/bash/gcc_parser.sh",
     "branches":["master"]
