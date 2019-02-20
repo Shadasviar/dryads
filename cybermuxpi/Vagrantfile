@@ -2,7 +2,7 @@
 # vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
-  config.vm.box = "debian/stretch64"
+  config.vm.box = "ubuntu/bionic64"
 
   config.vm.provision :docker, type: :shell, preserve_order: true, inline: <<-SHELL
     export DEBIAN_FRONTEND=noninteractive
@@ -11,21 +11,28 @@ Vagrant.configure("2") do |config|
     curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
     add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"
     apt update
-    apt-get install --assume-yes --quiet git docker-ce
-    systemctl start docker
+    apt-get install --assume-yes --quiet git golang docker.io
     systemctl enable docker
+    systemctl start docker
   SHELL
 
   config.vm.provision :dryad, type: :shell, preserve_order: true, inline: <<-SHELL
-    git clone https://github.com/SamsungSLAV/boruta
+    mkdir -p ~/go/src/github.com/SamsungSLAV
+    mkdir -p ~/go/bin
+    cd ~/go/src/github.com/SamsungSLAV
+    git clone "https://review.gerrithub.io/SamsungSLAV/boruta"
     cd boruta
-    make
-    mv bin/dryad_amd64 /usr/bin/dryad
+    git fetch "https://review.gerrithub.io/SamsungSLAV/boruta" refs/changes/70/445570/2 && git checkout FETCH_HEAD
+    go get ./...
+    go build -o dryad_amd64 cmd/dryad/dryad.go
+    GOARCH=arm GOARM=7 GOOS=linux go build -o dryad_armv7 cmd/dryad/dryad.go
+    mv dryad_amd64 /usr/bin/dryad
 
     mkdir -p /etc/boruta
     cat > /etc/boruta/dryad.conf <<EOL
-    listen_address = ":7175"
-    boruta_address = "192.168.1.14:8889"
+    listen_port = ":7176"
+    listen_address = "192.168.1.14:7176"
+    boruta_address = "192.168.1.14:7175"
     ssh_address = ":22"
     sdcard = "/dev/sdX"
     stm_path = "/run/stm.socket"
@@ -95,10 +102,11 @@ EOL
     WantedBy=default.target
 EOL
 
+    groupadd stm
     systemctl enable dryad
     systemctl start dryad
   SHELL
 
-  config.vm.network "forwarded_port", guest: 7175, host: 7176
+  config.vm.network "forwarded_port", guest: 7176, host: 7176
 
 end
