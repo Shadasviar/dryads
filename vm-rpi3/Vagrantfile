@@ -1,0 +1,118 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/bionic64"
+
+  config.vm.provision :docker, type: :shell, preserve_order: true, inline: <<-SHELL
+    export DEBIAN_FRONTEND=noninteractive
+    apt update
+    apt install --assume-yes apt-transport-https ca-certificates curl gnupg2 software-properties-common
+    curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
+    add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"
+    apt update
+    apt-get install --assume-yes --quiet git golang docker.io
+    systemctl enable docker
+    systemctl start docker
+  SHELL
+
+  config.vm.provision :dut_scripts, type: :shell, inline: <<-SHELL
+    git clone https://github.com/Shadasviar/dryads
+    cd dryads
+    cp vm-rpi3/*.sh /usr/local/bin
+  SHELL
+
+  config.vm.provision :dryad, type: :shell, preserve_order: true, inline: <<-SHELL
+    mkdir -p ~/go/src/github.com/SamsungSLAV
+    mkdir -p ~/go/bin
+    cd ~/go/src/github.com/SamsungSLAV
+    git clone "https://review.gerrithub.io/SamsungSLAV/boruta"
+    cd boruta
+    git fetch "https://review.gerrithub.io/SamsungSLAV/boruta" refs/changes/70/445570/2 && git checkout FETCH_HEAD
+    go get ./...
+    go build -o dryad_amd64 cmd/dryad/dryad.go
+    GOARCH=arm GOARM=7 GOOS=linux go build -o dryad_armv7 cmd/dryad/dryad.go
+    mv dryad_amd64 /usr/bin/dryad
+
+    mkdir -p /etc/boruta
+    cat > /etc/boruta/dryad.conf <<EOL
+    listen_port = ":7176"
+    listen_address = "192.168.1.14:7177"
+    boruta_address = "192.168.1.14:7175"
+    ssh_address = ":22"
+    sdcard = "/dev/sdX"
+    stm_path = "/run/stm.socket"
+
+    [caps]
+      UUID = "b123ff9c-0be2-41c8-a417-0bffe1e22e5d"
+      device_type = "rpi3"
+
+    [user]
+      name = "boruta-user"
+      groups = ["disk", "dialout", "stm", "uucp"]
+EOL
+  SHELL
+
+  config.vm.provision :muxpi, type: :shell, preserve_order: true, inline: <<-SHELL
+    git clone https://github.com/SamsungSLAV/muxpi
+    cd muxpi/sw/nanopi
+    make
+    mv bin/stm_amd64 /usr/bin/stm
+  SHELL
+
+  config.vm.provision :stm_service, type: :shell, preserve_order: true, inline: <<-SHELL
+    cat > /etc/systemd/system/stm.service <<EOL
+    [Unit]
+    Description=STM RPC
+    Requires=stm-user.socket
+    Requires=stm.socket
+
+    [Service]
+    ExecStart=/usr/bin/stm -serve -dummy
+    KillSignal=SIGINT
+
+    [Install]
+    WantedBy=multi-user.target
+
+EOL
+  SHELL
+
+  config.vm.provision :stm_socket, type: :shell, preserve_order: true, inline: <<-SHELL
+    cat > /etc/systemd/system/stm.socket <<EOL
+    [Unit]
+    Description=Admin socket activation for STM daemon
+
+    [Socket]
+    SocketMode=0660
+    ListenStream=/run/stm.socket
+
+    [Install]
+    WantedBy=sockets.target
+
+EOL
+  SHELL
+
+  config.vm.provision :dryad_service, type: :shell, preserve_order: true, inline: <<-SHELL
+    cat > /etc/systemd/system/dryad.service <<EOL
+    [Unit]
+    Description=Dryad service
+    Requires=stm.socket
+    
+    [Service]
+    Type=simple
+    ExecStartPre=-/bin/mknod -m 0666 /dev/fuse c 10 229
+    ExecStart=/usr/bin/dryad
+    Restart=always
+    
+    [Install]
+    WantedBy=default.target
+EOL
+
+    groupadd stm
+    systemctl enable dryad
+    systemctl start dryad
+  SHELL
+
+  config.vm.network "forwarded_port", guest: 7176, host: 7177
+
+end
