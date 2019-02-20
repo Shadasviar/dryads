@@ -64,8 +64,8 @@ EOL
     systemctl start weles
   SHELL
 
-  config.vm.network "forwarded_port", guest: 8487, host: 8888
-  config.vm.network "forwarded_port", guest: 5010, host: 8887
-  config.vm.network "forwarded_port", guest: 7175, host: 8889
+  config.vm.network "forwarded_port", guest: 8487, host: 8487
+  config.vm.network "forwarded_port", guest: 5010, host: 5010
+  config.vm.network "forwarded_port", guest: 7175, host: 7175
 
 end
