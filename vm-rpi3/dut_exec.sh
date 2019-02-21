@@ -1,3 +1,3 @@
 #!/bin/bash
 
-ssh boruta-user@${DUT_ADDR} $@
+ssh pi@${DUT_ADDR} $@

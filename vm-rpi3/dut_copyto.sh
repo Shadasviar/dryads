@@ -1,3 +1,3 @@
 #!/bin/bash
 
-scp $1 boruta-user@${DUT_ADDR}:$2
+scp $1 pi@${DUT_ADDR}:$2

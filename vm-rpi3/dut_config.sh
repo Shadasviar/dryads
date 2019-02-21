@@ -1,4 +1,4 @@
 #!/bin/bash
 
 BIN_PATH=/usr/local/bin
-DUT_ADDR=192.168.1.13
+DUT_ADDR=10.42.0.3

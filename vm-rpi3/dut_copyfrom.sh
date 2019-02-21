@@ -2,4 +2,4 @@
 
 . dut_config.sh
 
-scp boruta-user@${DUT_ADDR}:$1 $2
+scp pi${DUT_ADDR}:$1 $2

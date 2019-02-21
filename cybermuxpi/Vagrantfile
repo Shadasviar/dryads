@@ -30,9 +30,9 @@ Vagrant.configure("2") do |config|
 
     mkdir -p /etc/boruta
     cat > /etc/boruta/dryad.conf <<EOL
-    listen_port = ":7176"
-    listen_address = "192.168.1.14:7176"
-    boruta_address = "192.168.1.14:7175"
+    listen_port = ":7175"
+    listen_address = "10.42.1.6:7175"
+    boruta_address = "10.42.1.5:7175"
     ssh_address = ":22"
     sdcard = "/dev/sdX"
     stm_path = "/run/stm.socket"
@@ -107,6 +107,6 @@ EOL
     systemctl start dryad
   SHELL
 
-  config.vm.network "forwarded_port", guest: 7176, host: 7176
+  config.vm.network "private_network", ip: "10.42.1.6"
 
 end
