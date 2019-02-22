@@ -11,12 +11,13 @@ INSERT(      name: ) (name)
       test_cases:
 INSERT(        - case_name: ) (name)
           test_actions:
+              ##TEMPLATE_RUN mount -o remount,rw /##
               - push:
-                  ##TEMPLATE_URL ostest##
-                  dest: '/bin/ostest'
-                  alias: 'ostest'
-              ##TEMPLATE_RUN chmod +x /bin/ostest##
-              ##TEMPLATE_RUN_TEST ostest##
+                  ##TEMPLATE_URL test.sh##
+                  dest: '/test.sh'
+                  alias: 'test.sh'
+              ##TEMPLATE_RUN chmod 777 /test.sh##
+              ##TEMPLATE_RUN sh /test.sh > /test.log##
               - pull:
-                  src: '/tmp/test.log'
+                  src: '/test.log'
                   alias: 'test.log'
