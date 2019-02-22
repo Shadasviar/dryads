@@ -1,7 +1,7 @@
 [{
     "repo":"test",
     "name":"os-test",
-    "yaml":"~/os.yml",
+    "yaml":"/home/vlad/programming/bash/RP3RADD/simple-weles-test/os.yml",
     "parser":"Default",
-    "targets":["rpi3", "TV"]
+    "targets":["rpi3", "K3"]
 }] 
