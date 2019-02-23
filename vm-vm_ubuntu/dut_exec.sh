@@ -2,4 +2,4 @@
 
 . dut_config.sh
 
-scp $1 pi@${DUT_ADDR}:$2
+ssh vagrant@${DUT_ADDR} $@

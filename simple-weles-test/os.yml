@@ -17,7 +17,7 @@ INSERT(        - case_name: ) (name)
                   dest: '/test.sh'
                   alias: 'test.sh'
               ##TEMPLATE_RUN chmod 777 /test.sh##
-              ##TEMPLATE_RUN sh /test.sh > /test.log##
+              ##TEMPLATE_RUN sh /test.sh /test.log##
               - pull:
                   src: '/test.log'
                   alias: 'test.log'
