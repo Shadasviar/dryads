@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ssh-keygen -N "" -t rsa -f $HOME/tmp/id_rsa
+ssh-keygen -N "" -t rsa -f /tmp/id_rsa
 
 . dut_config.sh
 
