@@ -120,6 +120,9 @@ EOL
   config.vm.define "dut" do |dut|
       dut.vm.box = "ubuntu/bionic64"
       dut.vm.network "private_network", ip: "10.42.1.8"
+      dut.vm.provision :enable_ssh_password, type: :shell, inline: <<-SHELL
+        sed -i 's/#PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
+      SHELL
   end
 
 end
