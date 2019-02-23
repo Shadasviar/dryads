@@ -2,4 +2,4 @@
 
 . dut_config.sh
 
-ssh vagrant@${DUT_ADDR} $@
+ssh -o StrictHostKeyChecking=no vagrant@${DUT_ADDR} $@

@@ -2,4 +2,4 @@
 
 . dut_config.sh
 
-scp vagrant${DUT_ADDR}:$1 $2
+scp -o StrictHostKeyChecking=no vagrant${DUT_ADDR}:$1 $2
