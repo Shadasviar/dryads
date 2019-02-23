@@ -2,5 +2,5 @@
 
 . dut_config.sh
 
-yes | ssh-keygen
+ssh-keygen -N "" -t rsa -f $HOME/.ssh/id_rsa
 sshpass -p vagrant ssh-copy-id vagrant@${DUT_ADDR}
