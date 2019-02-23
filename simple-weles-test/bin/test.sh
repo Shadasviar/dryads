@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 function runtest {
     printf "$1 ... " >> $3

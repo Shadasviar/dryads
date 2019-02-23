@@ -3,5 +3,5 @@
     "name":"os-test",
     "yaml":"/home/vlad/programming/bash/RP3RADD/simple-weles-test/os.yml",
     "parser":"Default",
-    "targets":["rpi3", "K3"]
+    "targets":["rpi3", "K3", "Ubuntu"]
 }] 

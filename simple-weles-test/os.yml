@@ -11,13 +11,13 @@ INSERT(      name: ) (name)
       test_cases:
 INSERT(        - case_name: ) (name)
           test_actions:
-              ##TEMPLATE_RUN mount -o remount,rw /##
+IF_EQ_INSERT(target)(K3)(              ##TEMPLATE_RUN mount -o remount,rw /##)
               - push:
                   ##TEMPLATE_URL test.sh##
-                  dest: '/test.sh'
+IF_EQ_INSERT_ELSE(target)(K3)(                  dest: '/test.sh')(                  dest: './test.sh')
                   alias: 'test.sh'
-              ##TEMPLATE_RUN chmod 777 /test.sh##
-              ##TEMPLATE_RUN sh /test.sh /test.log##
+IF_EQ_INSERT_ELSE(target)(K3)(              ##TEMPLATE_RUN chmod 777 /test.sh##)(              ##TEMPLATE_RUN chmod +x ./test.sh##)
+IF_EQ_INSERT_ELSE(target)(K3)(              ##TEMPLATE_RUN sh /test.sh /test.log##)(              ##TEMPLATE_RUN ./test.sh /tmp/test.log##)
               - pull:
-                  src: '/test.log'
+IF_EQ_INSERT_ELSE(target)(K3)(                  src: '/test.log')(                  src: '/tmp/test.log')
                   alias: 'test.log'
