@@ -2,6 +2,10 @@
 # vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
+  config.vm.provider "virtualbox" do |v|
+      v.memory = 512
+  end
+
   config.vm.define "supervisor" do |supervisor|
       supervisor.vm.box = "ubuntu/bionic64"
 
