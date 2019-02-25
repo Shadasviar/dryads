@@ -55,7 +55,7 @@ EOL
       supervisor.vm.provision :dut_scripts, type: :shell, inline: <<-SHELL
         git clone https://github.com/Shadasviar/dryads
         cd dryads
-        cp vm-vm_ubuntu/*.sh /usr/local/bin
+        cp vm-vm_ubuntu/* /usr/local/bin/
       SHELL
 
       supervisor.vm.provision :muxpi, type: :shell, preserve_order: true, inline: <<-SHELL

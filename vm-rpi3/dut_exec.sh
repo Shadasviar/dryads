@@ -2,4 +2,4 @@
 
 . dut_config.sh
 
-ssh pi@${DUT_ADDR} $@
+sshpass -p test ssh -o StrictHostKeyChecking=no test@${DUT_ADDR} $@

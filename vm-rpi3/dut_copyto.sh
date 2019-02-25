@@ -2,4 +2,4 @@
 
 . dut_config.sh
 
-scp $1 pi@${DUT_ADDR}:$2
+sshpass -p test scp -o StrictHostKeyChecking=no $1 test@${DUT_ADDR}:$2
